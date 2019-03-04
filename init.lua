@@ -89,11 +89,12 @@ try{
 --
 try{
     func=function()
-        hs.urlevent.bind("screen", function(eventName, params)
+        hs.urlevent.bind("cursor", function(eventName, params)
             try {
                 func=function() 
-                    if params["id"] then
-                        id = tonumber(params["id"])
+                    paramName="toScreen"
+                    if params[paramName] then
+                        id = tonumber(params[paramName])
                         screen = _screens[id]
                         x=screen.size.w/2
                         y=screen.size.h/2
