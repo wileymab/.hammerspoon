@@ -1,7 +1,12 @@
 print(string.format("\n\n---\nRELOAD\n---\n"))
 
 -- Provide the script access to the relevant modules
-package.path = os.getenv("HOME") .. "/.hammerspoon/modules/?.lua; " .. package.path
+home = os.getenv("HOME")
+package.path =  home .. "/.hammerspoon/modules/?.lua;" ..
+                home .. "/.hammerspoon/modules/?/init.lua;"  ..
+                home .. "/.hammerspoon/.luarocks/share/lua/5.3/?.lua;" ..
+                home .. "/.hammerspoon/.luarocks/share/lua/5.3/?/init.lua;" ..
+                package.path
 
 local try = require("try")
 local autoConfigReload = require("auto-config-reload")
@@ -29,5 +34,6 @@ screenManager.init()
 -- ============================================================================
 --  Scratch space
 ---[[
-print(hs.network.interfaceName())
+local tableDump = require('pl.pretty').dump
+print(tableDump(hs.network.interfaceName('en10')))
 --]]
