@@ -1,0 +1,10 @@
+scriptDir=$(dirname ${BASH_SOURCE[0]})
+source $scriptDir/../desk.master.sh
+# =========================================================================
+#
+# hammerspoon
+#
+# Description: Hammerspoon scripts
+#
+# -------------------------------------------------------------------------
+initDesk /Users/m441527/.hammerspoon

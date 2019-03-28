@@ -24,3 +24,10 @@ try{
 
 autoConfigReload.start()
 screenManager.init()
+
+
+-- ============================================================================
+--  Scratch space
+---[[
+print(hs.network.interfaceName())
+--]]
