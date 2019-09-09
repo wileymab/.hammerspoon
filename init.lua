@@ -40,17 +40,28 @@ local tableDump = require('pl.pretty').dump
 -- print(tableDump(hs.network.interfaceName('en10')))
 local json = require('json')
 
-
+local lastWindow = {
+    host='',
+    name='',
+    app=''
+}
 hs.timer.doEvery(3,function() 
     try {
         func=function() 
-            windows = hs.window.allWindows()
-            tableDump(windows)
-            print(" ")
+            -- windows = hs.window.allWindows()
+            -- tableDump(windows)
+            -- print(" ")
             primaryWindow = hs.window.focusedWindow()
-            print("focusedWindow = " .. primaryWindow:title())
-            print("focusedWindowScreen = " .. primaryWindow:screen():name())
-            print("focusedApplication = " .. primaryWindow:application():name())
+
+            if lastWindow.name == primaryWindow:title() and lastWindow.host == hs.host:localizedName()
+            then
+            else
+                lastWindow.host = hs.host:localizedName()
+                lastWindow.name = primaryWindow:title()
+                lastWindow.app = primaryWindow:application():name()
+                print(hs.json.encode(lastWindow, true))
+            end
+
         end
     }
 end)
