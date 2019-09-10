@@ -43,9 +43,23 @@ local json = require('json')
 local lastWindow = {
     host='',
     name='',
-    app=''
+    app='',
+    epoch=''
 }
-hs.timer.doEvery(3,function() 
+
+local today = os.date('*t')
+print(hs.json.encode(today))
+local outputFile = "wesley" .. today['year'] .. "." .. today['month'] .. "." .. today['day'] .. ".csv"
+
+local dbPath = os.getenv("HOME") .. "/Desktop/wesley.db"
+print(dbPath)
+local db = hs.sqlite3.open(dbPath)
+print(db)
+
+
+hs.timer.doEvery(
+    3, -- 3 seconds
+    function() 
     try {
         func=function() 
             -- windows = hs.window.allWindows()
@@ -59,7 +73,21 @@ hs.timer.doEvery(3,function()
                 lastWindow.host = hs.host:localizedName()
                 lastWindow.name = primaryWindow:title()
                 lastWindow.app = primaryWindow:application():name()
+                lastWindow.epoch = os.time()
                 print(hs.json.encode(lastWindow, true))
+                result = db:execute("INSERT INTO log VALUES (" .. 
+                    "\"" .. lastWindow.host .. "\"," .. 
+                    "\"" .. lastWindow.app .. "\"," .. 
+                    "\"" .. lastWindow.name .. "\"," .. 
+                    lastWindow.epoch ..
+                    ")")
+                if result == hs.sqlite3.OK
+                then
+                    print('Insert successful.')
+                else
+                    print('Insert resulted in error code: ' .. result)
+                    print(db:errmsg())
+                end
             end
 
         end
@@ -67,9 +95,9 @@ hs.timer.doEvery(3,function()
 end)
 
 
-statusCode, body, headers = hs.http.get('https://api.clockify.me/api/v1/user', {
-    ['X-Api-Key']='XXLYCLJTBHWy1vc7'
-})
+-- statusCode, body, headers = hs.http.get('https://api.clockify.me/api/v1/user', {
+--     ['X-Api-Key']='XXLYCLJTBHWy1vc7'
+-- })
+-- print(tableDump(json.decode(body)))
 
-print(tableDump(json.decode(body)))
 --]]
