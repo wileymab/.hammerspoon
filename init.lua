@@ -56,6 +56,14 @@ print(dbPath)
 local db = hs.sqlite3.open(dbPath)
 print(db)
 
+result = db:execute('SELECT count(*) FROM log;')
+if result == hs.sqlite3.OK
+then
+else
+    db:execute("CREATE TABLE 'log' ( 'hostname' TEXT NOT NULL, 'app_name' TEXT NOT NULL, 'window_title' TEXT NOT NULL, 'epoch' INTEGER NOT NULL)")
+    print('Created table log.')
+end
+
 
 hs.timer.doEvery(
     3, -- 3 seconds
