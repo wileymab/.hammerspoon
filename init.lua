@@ -47,14 +47,14 @@ local lastWindow = {
     epoch=''
 }
 
-local today = os.date('*t')
-print(hs.json.encode(today))
-local outputFile = "wesley" .. today['year'] .. "." .. today['month'] .. "." .. today['day'] .. ".csv"
+-- local today = os.date('*t')
+-- print(hs.json.encode(today))
+-- local outputFile = "wesley" .. today['year'] .. "." .. today['month'] .. "." .. today['day'] .. ".csv"
 
 local dbPath = os.getenv("HOME") .. "/Desktop/wesley.db"
-print(dbPath)
+-- print(dbPath)
 local db = hs.sqlite3.open(dbPath)
-print(db)
+-- print(db)
 
 result = db:execute('SELECT count(*) FROM log;')
 if result == hs.sqlite3.OK
@@ -72,33 +72,40 @@ hs.timer.doEvery(
         func=function() 
             -- windows = hs.window.allWindows()
             -- tableDump(windows)
+            -- 
             -- print(" ")
             primaryWindow = hs.window.focusedWindow()
 
-            if lastWindow.name == primaryWindow:title() and lastWindow.host == hs.host:localizedName()
+            if primaryWindow:title():match('^[0-9:]+.*Clockify.*')
             then
-            else
-                lastWindow.host = hs.host:localizedName()
-                lastWindow.name = primaryWindow:title()
-                lastWindow.app = primaryWindow:application():name()
-                lastWindow.epoch = os.time()
-                print(hs.json.encode(lastWindow, true))
-                result = db:execute("INSERT INTO log VALUES (" .. 
-                    "\"" .. lastWindow.host .. "\"," .. 
-                    "\"" .. lastWindow.app .. "\"," .. 
-                    "\"" .. lastWindow.name .. "\"," .. 
-                    lastWindow.epoch ..
-                    ")")
-                if result == hs.sqlite3.OK
+                print(primaryWindow.title())
+            else 
+                if lastWindow.name == primaryWindow:title() and lastWindow.host == hs.host:localizedName()
                 then
-                    print('Insert successful.')
                 else
-                    print('Insert resulted in error code: ' .. result)
-                    print(db:errmsg())
+                    lastWindow.host = hs.host:localizedName()
+                    lastWindow.name = primaryWindow:title()
+                    lastWindow.app = primaryWindow:application():name()
+                    lastWindow.epoch = os.time()
+                    print(hs.json.encode(lastWindow, true))
+                    result = db:execute("INSERT INTO log VALUES (" .. 
+                        "\"" .. lastWindow.host .. "\"," .. 
+                        "\"" .. lastWindow.app .. "\"," .. 
+                        "\"" .. lastWindow.name .. "\"," .. 
+                        lastWindow.epoch ..
+                        ")")
+                    if result == hs.sqlite3.OK
+                    then
+                        print('Insert successful.')
+                    else
+                        print('Insert resulted in error code: ' .. result)
+                        print(db:errmsg())
+                    end
                 end
             end
 
         end
+
     }
 end)
 
