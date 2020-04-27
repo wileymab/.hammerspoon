@@ -31,16 +31,10 @@ try{
 -- ----------
 
 autoConfigReload.start()
--- screenManager.init()
+wifiSwitch.start()
 
 -- ============================================================================
 --  Scratch space
----[[
+--[[
 local tableDump = require('pl.pretty').dump
--- print(tableDump(hs.network.interfaceName('en10')))
--- print(tableDump(hs.network.interfaces()))
-
-
-
-
 ---]]

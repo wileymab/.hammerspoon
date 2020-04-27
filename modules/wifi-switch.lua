@@ -1,26 +1,54 @@
+-- Provide the script access to the relevant modules
+package.path = os.getenv("HOME") .. "/.hammerspoon/modules/?.lua; " .. package.path
 
-wifi_switch_workspace = {
-    last_power_state=nil
+local try = require("try")
+
+try{
+    func=function()
+        -- Eager load  the required extensions
+        hs.network.interfaces()
+    end
 }
 
-hs.timer.doEvery(10, function() 
-    wired_ip = "192.168.0.123"
-    wired_ip_found = false
-    for i, v in  ipairs(hs.network.addresses()) do
-        if v == wired_ip then
-            wired_ip_found = true
-            break
+-- ============================================================================
+--  Wifi State Switcher
+local WifiSwitch = {
+    last_power_state = nil
+}
+
+function WifiSwitch.start()
+    try{
+        func=function()
+            hs.timer.doEvery(10, function() 
+                wired_ip = "192.168.0.123"
+                wired_ip_found = false
+                for i, v in  ipairs(hs.network.addresses()) do
+                    if v == wired_ip then
+                        wired_ip_found = true
+                        break
+                    end
+                end
+                power_state = not wired_ip_found
+                if not (WifiSwitch.last_power_state == power_state) then
+                    hs.wifi.setPower(power_state)
+                    WifiSwitch.last_power_state = power_state
+                    if power_state then
+                        print("Turning wifi on.")
+                    else
+                        print("Turning wifi off.")
+                    end
+                end
+            end)
+        end,
+        accept=function()
+            print("... automatic config reload setup complete.")
+        end,
+        reject=function()
+            print("... automatic config reload setup failed.")
         end
-    end
-    power_state = not wired_ip_found
-    if not (wifi_switch_workspace.last_power_state == power_state) then
-        hs.wifi.setPower(power_state)
-        wifi_switch_workspace.last_power_state = power_state
-        if power_state then
-            print("Turning wifi on.")
-        else
-            print("Turning wifi off.")
-        end
-    end
-end)
+    }
+end
+
+return WifiSwitch
+-- ----------
 
