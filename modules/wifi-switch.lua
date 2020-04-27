@@ -41,10 +41,10 @@ function WifiSwitch.start()
             end)
         end,
         accept=function()
-            print("... automatic config reload setup complete.")
+            print("Wifi Switcher started.")
         end,
         reject=function()
-            print("... automatic config reload setup failed.")
+            print("Wifi Switcher failed to start properly.")
         end
     }
 end
